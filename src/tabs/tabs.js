@@ -76,6 +76,13 @@ angular.module('ui.bootstrap.tabs', [])
     ctrl.tabs.splice(index, 1);
   };
 
+
+  $scope.select = function(tab) {
+      if(!tab.tab.disabled){
+        ctrl.select(tab.index);
+      } 
+  };
+  
   $scope.$watch('tabset.active', function(val) {
     if (angular.isDefined(val) && val !== oldIndex) {
       ctrl.select(findTabIndex(val));
@@ -210,18 +217,38 @@ angular.module('ui.bootstrap.tabs', [])
       //Now our tab is ready to be transcluded: both the tab heading area
       //and the tab content area are loaded.  Transclude 'em both.
       tab.$transcludeFn(tab.$parent, function(contents) {
+        var hasHeader = false;
         angular.forEach(contents, function(node) {
           if (isTabHeading(node)) {
             //Let tabHeadingTransclude know.
             tab.headingElement = node;
+            if(angular.isUndefined(tab.heading)){
+                tab.heading = angular.element(node).text().trim();
+            }
+          } else if(isResponsiveHeading(node)) { 
+            var rheader = angular.element(elm.children()[0]);
+            rheader.html('');
+            rheader.append(node.clone(true));
+            hasHeader = true;
           } else {
-            elm.append(node);
+            elm.children()[1].append(node);
           }
         });
+        if(!hasHeader){
+            var rheader = angular.element(elm.children()[0]);
+            rheader.html(tab.heading);
+        }
       });
     }
   };
 
+  function isResponsiveHeading(node) {
+    return node.tagName && (
+      node.hasAttribute('uib-responsive-heading') ||
+      node.tagName.toLowerCase() === 'uib-responsive-heading'
+    );
+  }
+  
   function isTabHeading(node) {
     return node.tagName && (
       node.hasAttribute('uib-tab-heading') ||
