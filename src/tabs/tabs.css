@@ -1,0 +1,12 @@
+.uib-tab-responsive-heading {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+}
+
+.uib-tab-responsive-heading .uib-tab-responsive-tab-name{
+    flex: 1;
+}
+.uib-tab-responsive-heading .uib-tab-responsive-tab-next-btn {
+    width: 60px;
+}
